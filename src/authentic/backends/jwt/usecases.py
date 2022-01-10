@@ -1,5 +1,6 @@
 """ Usecase for handling basic Authentication """
 from datetime import datetime
+import json
 
 from jwt.algorithms import requires_cryptography
 from jwt.exceptions import DecodeError, ExpiredSignatureError
@@ -13,6 +14,7 @@ from protean.core.transport import ResponseSuccess
 from protean.core.transport import Status
 from protean.core.transport import ValidRequestObject
 from protean.core.usecase import UseCase
+from protean.core.cache import cache
 
 from .exceptions import JWTDecodeError
 from .tokens import decode_jwt
@@ -53,12 +55,17 @@ class LoginCallbackUseCase(UseCase):
         )
 
         # Save the session to enable logout
+        session_key=f'token-{request_object.account.id}'f'-{token_data["jti"]}'
         repo.SessionSchema.create(
-            session_key=f'token-{request_object.account.id}'
-                        f'-{token_data["jti"]}',
+            session_key=session_key,
             session_data={},
             expire_date=datetime.utcnow() +
                         active_config.JWT_ACCESS_TOKEN_EXPIRES
+        )
+        cache.provider.set(
+            session_key,
+            json.dumps(access_token),
+            int(active_config.JWT_ACCESS_TOKEN_EXPIRES.total_seconds()),
         )
         context.set_context({'jwt_data': token_data})
         return ResponseSuccess(Status.SUCCESS, {'access_token': access_token})
