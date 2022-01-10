@@ -27,7 +27,8 @@ class LoginCallbackUseCase(UseCase):
 
         # Build the identity to be encoded in the jwt
         identity = {
-            'account_id': request_object.account.id
+            'account_id': request_object.account.id,
+            'roles': request_object.account.roles
         }
         if active_config.JWT_IDENTITY_CALLBACK:
             identity.update(request_object.account)
