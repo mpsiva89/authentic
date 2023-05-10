@@ -151,7 +151,7 @@ class AuthenticationUseCase(UseCase):
         #             expire_date=datetime.utcnow() +
         #                         active_config.JWT_ACCESS_TOKEN_EXPIRES
         #         )
-        redis_key = f'token:{account.id}:{jwt_data["token_suffix"]}'
+        redis_key = f'token:{jwt_data["auth_user_id"]}:{jwt_data["token_suffix"]}'
         print('---Rediskey---')
         print(redis_key)
         print('---Rediskey---')
