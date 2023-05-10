@@ -152,18 +152,12 @@ class AuthenticationUseCase(UseCase):
         #                         active_config.JWT_ACCESS_TOKEN_EXPIRES
         #         )
         redis_key = f'token:{jwt_data["auth_user_id"]}:{jwt_data["token_suffix"]}'
-        print('---Rediskey---')
-        print(redis_key)
-        print('---Rediskey---')
         session = cache.provider.get(redis_key)
-        print('---session---')
-        print(session)
-        print('---session---')
         # if not session or session.first.expire_date < datetime.utcnow():
         # FIXME check for expiry date
-        if not session:
-            return ResponseFailure(
-                Status.UNAUTHORIZED, {'token': 'Invalid Token'})
+        # if not session:
+        #     return ResponseFailure(
+        #         Status.UNAUTHORIZED, {'token': 'Invalid Token'})
 
         context.set_context({'jwt_data': jwt_data})
         return ResponseSuccess(Status.SUCCESS, account)
