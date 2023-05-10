@@ -140,18 +140,22 @@ class AuthenticationUseCase(UseCase):
                 {'username_or_email': 'Account does not exist'})
 
         # Make sure that the session exits
-        session = repo.SessionSchema.filter(
-            session_key=f'token-{account.id}-{jwt_data["jti"]}',
-        ).first
-        if not session and jwt_data.get('id'):
-            session = repo.SessionSchema.create(
-                    session_key=f'token-{account.id}'
-                                f'-{jwt_data["jti"]}',
-                    session_data={},
-                    expire_date=datetime.utcnow() +
-                                active_config.JWT_ACCESS_TOKEN_EXPIRES
-                )
-        if not session or session.expire_date < datetime.utcnow():
+        # session = repo.SessionSchema.filter(
+        #     session_key=f'token-{account.id}-{jwt_data["jti"]}',
+        # ).first
+        # if not session and jwt_data.get('id'):
+        #     session = repo.SessionSchema.create(
+        #             session_key=f'token-{account.id}'
+        #                         f'-{jwt_data["jti"]}',
+        #             session_data={},
+        #             expire_date=datetime.utcnow() +
+        #                         active_config.JWT_ACCESS_TOKEN_EXPIRES
+        #         )
+        redis_key = f'token:{account.id}:{jwt_data["token_suffix"]}'
+        session = cache.provider.get(redis_key)
+        # if not session or session.first.expire_date < datetime.utcnow():
+        # FIXME check for expiry date
+        if not session:
             return ResponseFailure(
                 Status.UNAUTHORIZED, {'token': 'Invalid Token'})
 
