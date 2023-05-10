@@ -13,6 +13,7 @@ from protean.core.transport import ResponseSuccess
 from protean.core.transport import Status
 from protean.core.transport import ValidRequestObject
 from protean.core.usecase import UseCase
+from protean.core.cache import cache
 
 from ...entities import Session
 from ...utils import get_account_entity
@@ -132,10 +133,14 @@ class AuthenticationUseCase(UseCase):
                 {'username_or_email': 'Account does not exist'})
 
         # Make sure that the session exits
-        session = Session.query.filter(
-            session_key=f'token-{account.id}-{jwt_data["jti"]}',
-        )
-        if not session or session.first.expire_date < datetime.utcnow():
+        # session = Session.query.filter(
+        #     session_key=f'token-{account.id}-{jwt_data["jti"]}',
+        # )
+        redis_key = f'token:{account.id}:{jwt_data["token_suffix"]}'
+        session = cache.provider.get(redis_key)
+        # if not session or session.first.expire_date < datetime.utcnow():
+        # FIXME check for expiry date
+        if not session:
             return ResponseFailure(
                 Status.UNAUTHORIZED, {'token': 'Invalid Token'})
 
