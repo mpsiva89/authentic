@@ -53,7 +53,6 @@ def encode_access_token(email, identity, secret, algorithm, expires_delta, fresh
     types
     :return: Encoded access token
     """
-    from pdb import set_trace; set_trace()  
     if isinstance(fresh, datetime.timedelta):
         now = datetime.datetime.utcnow()
         fresh = timegm((now + fresh).utctimetuple())
