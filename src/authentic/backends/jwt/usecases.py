@@ -152,7 +152,6 @@ class AuthenticationUseCase(UseCase):
         #             expire_date=datetime.utcnow() +
         #                         active_config.JWT_ACCESS_TOKEN_EXPIRES
         #         )
-        print(jwt_data)
         redis_key = f'token:{jwt_data["auth_user_id"]}:{jwt_data["token_suffix"]}'
         session = cache.provider.get(redis_key)
         # if not session or session.first.expire_date < datetime.utcnow():
