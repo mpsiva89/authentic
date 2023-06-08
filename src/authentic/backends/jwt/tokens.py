@@ -16,7 +16,7 @@ def _encode_jwt(additional_token_data, expires_delta, secret, algorithm,
     token_data = {
         'iat': now,
         'nbf': now,
-        'jti': uid,
+        'jti': uid
     }
     # If expires_delta is False, the JWT should never expire
     # and the 'exp' claim is not set.
@@ -28,7 +28,7 @@ def _encode_jwt(additional_token_data, expires_delta, secret, algorithm,
     return token_data, encoded_token
 
 
-def encode_access_token(identity, secret, algorithm, expires_delta, fresh,
+def encode_access_token(email, identity, secret, algorithm, expires_delta, fresh,
                         user_claims, csrf, identity_claim_key, user_claims_key,
                         json_encoder=None):
     """
@@ -53,12 +53,15 @@ def encode_access_token(identity, secret, algorithm, expires_delta, fresh,
     types
     :return: Encoded access token
     """
-
     if isinstance(fresh, datetime.timedelta):
         now = datetime.datetime.utcnow()
         fresh = timegm((now + fresh).utctimetuple())
 
     token_data = {
+        'csrf': str(uuid.uuid4()),
+        'auth_user_id': str(uuid.uuid4()),
+        'token_suffix': str(uuid.uuid4()),
+        'email': email,
         identity_claim_key: identity,
         'fresh': fresh,
         'type': 'access',

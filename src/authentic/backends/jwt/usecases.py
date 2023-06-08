@@ -43,6 +43,7 @@ class LoginCallbackUseCase(UseCase):
 
         # Generate the jwt token and return in response
         token_data, access_token = encode_access_token(
+            email=request_object.account.email,
             identity=identity,
             secret=encode_key,
             algorithm=active_config.JWT_ALGORITHM,
