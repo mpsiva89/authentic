@@ -145,10 +145,9 @@ class AuthenticationUseCase(UseCase):
         print(jwt_data)
         print(jwt_data.get("last_password_set_date_iso"))
         print(datetime.utcnow())
-        print(datetime.fromisoformat(jwt_data.get("last_password_set_date_iso")).days)
-        print((jwt_data.get("last_password_set_date_iso") and (datetime.utcnow() - datetime.fromisoformat(jwt_data.get("last_password_set_date_iso"))).days > 365))
+        print((jwt_data.get("last_password_set_date_iso") and (datetime.utcnow() - datetime.strptime(jwt_data.get("last_password_set_date_iso"), '%Y-%m-%dT%H:%M:%S.%f')).days > 365))
         print('------')
-        if (jwt_data.get("last_password_set_date_iso") and (datetime.utcnow() - datetime.fromisoformat(jwt_data.get("last_password_set_date_iso"))).days > 365):
+        if (jwt_data.get("last_password_set_date_iso") and (datetime.utcnow() - datetime.strptime(jwt_data.get("last_password_set_date_iso"), '%Y-%m-%dT%H:%M:%S.%f')).days > 365):
             raise ResponseFailure(Status.UNAUTHORIZED, {
                 "password_expired": "Please change your password as it has been more than a year since you changed it."
             })  # pragma: no cover
