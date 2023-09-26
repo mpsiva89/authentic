@@ -140,6 +140,11 @@ class AuthenticationUseCase(UseCase):
                 Status.NOT_FOUND,
                 {'username_or_email': 'Account does not exist'})
 
+        if (jwt_data.get("last_password_set_date_iso") and (datetime.utcnow() - datetime.fromisoformat(jwt_data.get("last_password_set_date_iso"))).days > 365):
+            raise ResponseFailure(Status.UNAUTHORIZED, {
+                "password_expired": "Please change your password as it has been more than a year since you changed it."
+            })  # pragma: no cover
+
         # Make sure that the session exits
         # session = repo.SessionSchema.filter(
         #     session_key=f'token-{account.id}-{jwt_data["jti"]}',
