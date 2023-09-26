@@ -140,6 +140,14 @@ class AuthenticationUseCase(UseCase):
                 Status.NOT_FOUND,
                 {'username_or_email': 'Account does not exist'})
 
+        print('------')
+        print(Status.UNAUTHORIZED)
+        print(jwt_data)
+        print(jwt_data.get("last_password_set_date_iso"))
+        print(datetime.utcnow())
+        print(datetime.fromisoformat(jwt_data.get("last_password_set_date_iso")).days)
+        print((jwt_data.get("last_password_set_date_iso") and (datetime.utcnow() - datetime.fromisoformat(jwt_data.get("last_password_set_date_iso"))).days > 365))
+        print('------')
         if (jwt_data.get("last_password_set_date_iso") and (datetime.utcnow() - datetime.fromisoformat(jwt_data.get("last_password_set_date_iso"))).days > 365):
             raise ResponseFailure(Status.UNAUTHORIZED, {
                 "password_expired": "Please change your password as it has been more than a year since you changed it."
