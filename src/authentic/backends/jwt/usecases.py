@@ -161,9 +161,9 @@ class AuthenticationUseCase(UseCase):
         session = cache.provider.get(redis_key)
         # if not session or session.first.expire_date < datetime.utcnow():
         # FIXME check for expiry date
-        # if not session:
-        #     return ResponseFailure(
-        #         Status.UNAUTHORIZED, {'token': 'Invalid Token'})
+        if not session:
+            return ResponseFailure(
+                Status.UNAUTHORIZED, {'token': 'Invalid Token'})
 
         context.set_context({'jwt_data': jwt_data})
         return ResponseSuccess(Status.SUCCESS, account)
