@@ -160,8 +160,6 @@ class AuthenticationUseCase(UseCase):
         redis_key = f'token:{jwt_data["auth_user_id"]}:{jwt_data["token_suffix"]}'
         client = cache.provider.client
         session = client.get(redis_key)
-        print('+++++++++++session++++++++++++++')
-        print(session)
         # if not session or session.first.expire_date < datetime.utcnow():
         # FIXME check for expiry date
         if session is None:
